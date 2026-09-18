@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LostSocks - носки без пары</title>
+<meta name="description" content="Пародийный каталог носков, потерявшихся при стирке">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 110'><path d='M30 6H70V60L92 74A16 16 0 0176 100H46A16 16 0 0130 84Z' fill='%23ffb01f'/></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- ───────────────── возрастной фильтр ───────────────── -->
+<div class="gate" id="gate">
+  <div class="gate__card">
+    <div class="gate__sock" id="gateSock"></div>
+    <h1>Вам есть 18 стирок?</h1>
+    <p>Дальше - носки без пары, дырки на пятках и кадры из барабана.
+       Хлопку младше 18 циклов вход закрыт</p>
+    <div class="gate__btns">
+      <button class="btn btn--primary" id="gateYes">Да, я стиран</button>
+      <button class="btn btn--ghost" id="gateNo">Нет, я новый</button>
+    </div>
+    <small class="gate__legal">Сайт-пародия. Все носки совершеннолетние и постираны добровольно</small>
+  </div>
+</div>
+
+<!-- ───────────────── шапка ───────────────── -->
+<header class="top">
+  <div class="top__in">
+    <a class="logo" href="#" aria-label="LostSocks">
+      <span class="logo__a">Lost </span><span class="logo__b">Socks</span>
+    </a>
+
+    <form class="search" id="searchForm" role="search">
+      <input id="searchInput" type="search" placeholder="шерстяной, махровый, в горошек…" autocomplete="off">
+      <button type="submit" aria-label="Искать">
+        <svg viewBox="0 0 24 24" width="18" height="18"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2"/><path d="M16.5 16.5 21 21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      </button>
+    </form>
+
+    <div class="top__right">
+      <button class="btn btn--upload" id="adminBtn">Админка</button>
+      <button class="avatar" id="avatarBtn" title="Профиль" aria-label="Профиль"></button>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <!-- фильтры -->
+  <nav class="chips" id="chips" aria-label="Категории"></nav>
+
+  <div class="bar">
+    <h2 class="bar__title" id="gridTitle">Свежее из барабана</h2>
+    <div class="bar__right">
+      <span class="bar__count" id="gridCount"></span>
+      <select id="sortSel" class="sel">
+        <option value="new">Сначала новые</option>
+        <option value="views">По стиркам</option>
+        <option value="likes">По лайкам</option>
+        <option value="dur">По длине цикла</option>
+      </select>
+    </div>
+  </div>
+
+  <section class="grid" id="grid"></section>
+
+  <p class="empty" id="empty" hidden>Такого носка нет. Проверьте под диваном.</p>
+
+  <button class="btn btn--more" id="moreBtn" hidden>Показать ещё</button>
+</main>
+
+<!-- ───────────────── плеер ───────────────── -->
+<div class="modal" id="modal" hidden>
+  <div class="modal__bg" data-close></div>
+  <div class="modal__box" role="dialog" aria-modal="true">
+    <button class="modal__x" data-close aria-label="Закрыть">✕</button>
+
+    <div class="player">
+      <div class="player__stage" id="stage"></div>
+      <div class="player__ctrl">
+        <button class="play" id="playBtn" aria-label="Пуск">
+          <svg viewBox="0 0 24 24" width="16" height="16"><path id="playIcon" d="M7 4l13 8-13 8z" fill="currentColor"/></svg>
+        </button>
+        <div class="track" id="track"><div class="track__fill" id="trackFill"></div></div>
+        <span class="time" id="time">0:00</span>
+      </div>
+    </div>
+
+    <div class="meta">
+      <h3 id="mTitle">—</h3>
+      <div class="meta__row">
+        <span class="meta__stat" id="mViews"></span>
+        <div class="meta__acts">
+          <button class="act" id="likeBtn"><span>♥</span> <b id="likeCount">0</b></button>
+          <button class="act" id="reshootBtn" hidden>Другой кадр</button>
+          <button class="act act--danger" id="delBtn" hidden>Удалить</button>
+        </div>
+      </div>
+      <div class="tags" id="mTags"></div>
+      <p class="meta__desc" id="mDesc"></p>
+    </div>
+
+    <div class="cmts">
+      <div class="cmts__head"><b id="cmtCount">0</b> комментариев</div>
+      <form class="cmts__form" id="cmtForm">
+        <div class="cmts__ava" id="cmtAva"></div>
+        <input id="cmtInput" placeholder="Напишите что-нибудь тёплое…" maxlength="160">
+        <button class="btn btn--primary btn--sm">Отправить</button>
+      </form>
+      <ul class="cmts__list" id="cmtList"></ul>
+    </div>
+  </div>
+</div>
+
+<!-- ───────────────── профиль ───────────────── -->
+<div class="modal" id="prof" hidden>
+  <div class="modal__bg" data-profclose></div>
+  <div class="modal__box modal__box--narrow" role="dialog" aria-modal="true" aria-label="Профиль">
+    <button class="modal__x" data-profclose aria-label="Закрыть">✕</button>
+
+    <div class="prof">
+      <div class="prof__head">
+        <div class="prof__ava" id="profAva"></div>
+        <div class="prof__id">
+          <h3 id="profNick">—</h3>
+          <p class="prof__bio" id="profBio"></p>
+          <div class="prof__stats" id="profStats"></div>
+        </div>
+      </div>
+
+      <div class="prof__ava-acts">
+        <label class="btn btn--sm" id="profPick">
+          Сменить аватарку
+          <input type="file" id="profFile" accept="image/*" hidden>
+        </label>
+        <button class="btn btn--sm" id="profAvaDrop" type="button" hidden>Вернуть носок</button>
+        <small class="prof__hint">jpg, png, webp или gif — до 5 МБ</small>
+      </div>
+
+      <form class="prof__form" id="profForm">
+        <div class="up__label">Ник</div>
+        <input class="up__in" id="profNickIn" maxlength="24" placeholder="Как вас звать в барабане">
+
+        <div class="up__label">О себе</div>
+        <textarea class="up__in" id="profBioIn" rows="2" maxlength="160"
+                  placeholder="Пара тёплых слов о себе. Или холодных"></textarea>
+
+        <div class="up__label">Цвет носка без аватарки</div>
+        <div class="prof__pals" id="profPals"></div>
+
+        <div class="prof__foot">
+          <small id="profLeft">Осталось 160</small>
+          <button class="btn btn--primary" id="profSave" type="submit">Сохранить</button>
+        </div>
+      </form>
+
+      <div class="prof__label">Мои носки</div>
+      <div class="prof__socks" id="profSocks"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ───────────────── админка ───────────────── -->
+<div class="modal" id="adm" hidden>
+  <div class="modal__bg" data-admclose></div>
+  <div class="modal__box modal__box--wide" role="dialog" aria-modal="true" aria-label="Админка">
+    <button class="modal__x" data-admclose aria-label="Закрыть">✕</button>
+
+    <!-- вход -->
+    <form class="adm__login" id="admLogin">
+      <h3>Вход в админку</h3>
+      <p>Пароль задаётся переменной <code>ADMIN_PASSWORD</code>. Если её нет, сервер
+         печатает разовый пароль в консоли при запуске.</p>
+      <input class="up__in" id="admPass" type="password" autocomplete="current-password"
+             placeholder="Пароль">
+      <button class="btn btn--primary" type="submit">Войти</button>
+    </form>
+
+    <!-- панель -->
+    <div class="adm" id="admPanel" hidden>
+      <div class="adm__head">
+        <h3>Админка</h3>
+        <button class="btn btn--sm" id="admOut" type="button">Выйти</button>
+      </div>
+
+      <form class="up" id="upForm">
+        <label class="drop" id="drop">
+          <input type="file" id="upFile" accept="video/*" hidden>
+          <span class="drop__icon">⤓</span>
+          <b id="dropName">Перетащите ролик или выберите файл</b>
+          <span class="drop__hint" id="dropHint">mp4, webm, mov, mkv — до 300 МБ</span>
+        </label>
+
+        <input class="up__in" id="upTitle" placeholder="Название ролика" maxlength="120">
+
+        <div class="up__label">Категории</div>
+        <div class="up__cats" id="upCats"></div>
+
+        <textarea class="up__in" id="upDesc" rows="2" maxlength="400" placeholder="Описание"></textarea>
+
+        <div class="up__progress" id="upProgress" hidden><i id="upBar"></i></div>
+
+        <div class="up__foot">
+          <small>Превью соберётся само: сервер вырежет случайный кадр из ролика.</small>
+          <button class="btn btn--primary" id="upSend" type="submit">Залить</button>
+        </div>
+      </form>
+
+      <div class="adm__label">Загруженные ролики <span id="admCount"></span></div>
+      <div class="adm__list" id="admList"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ───────────────── тост ───────────────── -->
+<div class="toast" id="toast" hidden></div>
+
+<footer class="foot">
+  <div class="foot__in">
+    <div>
+      <span class="logo logo--sm"><span class="logo__a">Lost</span><span class="logo__b">Socks</span></span>
+      <p>Пародия. Ни один носок не пострадал, кроме того белого, который постирали с красным.</p>
+    </div>
+    <ul>
+      <li><a href="#">Бюро находок</a></li>
+      <li><a href="#">Правила барабана</a></li>
+      <li><a href="#">Жалоба на шерсть</a></li>
+      <li><a href="#">2257 (о температуре)</a></li>
+    </ul>
+  </div>
+</footer>
+
+<script src="socks.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
