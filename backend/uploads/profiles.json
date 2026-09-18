@@ -1,0 +1,22 @@
+[
+  {
+    "id": "ub392c0c6fbd9",
+    "token": "c91ba4e638524d11e13afb07b2c9b2e2b95c7ba0bafb9f6e",
+    "nick": "Левый гость",
+    "bio": "",
+    "pal": 5,
+    "avatarFile": null,
+    "avatarAt": 0,
+    "createdAt": "2026-09-18T05:32:38.192Z"
+  },
+  {
+    "id": "u629adcc229e5",
+    "token": "a7919aaaa04697f8561fbe1ffa5529435ebfcc9d8a11a709",
+    "nick": "Правый_41",
+    "bio": "",
+    "pal": 0,
+    "avatarFile": null,
+    "avatarAt": 0,
+    "createdAt": "2026-09-18T05:42:59.503Z"
+  }
+]
